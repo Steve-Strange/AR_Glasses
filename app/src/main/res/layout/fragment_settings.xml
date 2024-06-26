@@ -1,22 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.settings.SettingsFragment">
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="56dp">
 
-    <TextView
-        android:id="@+id/text_settings"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Device settings"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:layout_marginBottom="16dp"/>
+
+        <include layout="@layout/device_status_layout" />
+
+        <include layout="@layout/settings_item"
+            android:id="@+id/glasses_privacy"
+            app:icon="@drawable/tutorial1"
+            app:title="Glasses privacy" />
+
+        <include layout="@layout/settings_item"
+            android:id="@+id/voice"
+            app:icon="@drawable/tutorial1"
+            app:title="Voice" />
+
+        <include layout="@layout/settings_item"
+            android:id="@+id/camera"
+            app:icon="@drawable/tutorial1"
+            app:title="Camera" />
+
+
+        <!-- Add more setting items here -->
+
+    </LinearLayout>
+</ScrollView>

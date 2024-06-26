@@ -4,11 +4,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.ar_glasses.databinding.FragmentSettingsBinding;
 
@@ -18,15 +17,24 @@ public class SettingsFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        SettingsViewModel settingsViewModel =
-                new ViewModelProvider(this).get(SettingsViewModel.class);
-
         binding = FragmentSettingsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textSettings;
-        settingsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        setupSettingItems();
+
         return root;
+    }
+
+    private void setupSettingItems() {
+        binding.glassesPrivacy.getRoot().setOnClickListener(v -> navigateToSubSetting("Glasses & privacy"));
+        binding.voice.getRoot().setOnClickListener(v -> navigateToSubSetting("Voice"));
+        binding.camera.getRoot().setOnClickListener(v -> navigateToSubSetting("Camera"));
+        // Add more click listeners for other setting items
+    }
+
+    private void navigateToSubSetting(String settingName) {
+        // TODO: Implement navigation to sub-setting
+        Toast.makeText(getContext(), "Navigating to " + settingName, Toast.LENGTH_SHORT).show();
     }
 
     @Override
