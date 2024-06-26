@@ -1,17 +1,19 @@
 package com.example.ar_glasses.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ar_glasses.R;
 import com.example.ar_glasses.TutorialAdapter;
+import com.example.ar_glasses.TutorialDetailActivity;
 import com.example.ar_glasses.TutorialItem;
 import com.example.ar_glasses.databinding.FragmentHomeBinding;
 
@@ -39,20 +41,20 @@ public class HomeFragment extends Fragment {
 
     private void initTutorials() {
         tutorials = Arrays.asList(
-                new TutorialItem(R.drawable.tutorial1, "Look and Ask with Meta AI", "Content for tutorial 1"),
-                new TutorialItem(R.drawable.tutorial2, "Say \"Hey Meta\" to learn and create", "Content for tutorial 2"),
-                new TutorialItem(R.drawable.tutorial3, "Learn to take photos and videos", "Content for tutorial 3"),
-                new TutorialItem(R.drawable.tutorial4, "Tutorial 4", "Content for tutorial 4")
+                new TutorialItem(1, R.drawable.tutorial1, "Look and Ask with Meta AI", "Content for tutorial 1"),
+                new TutorialItem(2, R.drawable.tutorial2, "Say \"Hey Meta\" to learn and create", "Content for tutorial 2"),
+                new TutorialItem(3, R.drawable.tutorial3, "Learn to take photos and videos", "Content for tutorial 3"),
+                new TutorialItem(4, R.drawable.tutorial4, "Tutorial 4", "Content for tutorial 4")
         );
     }
 
     private void setupRecyclerView() {
         tutorialAdapter = new TutorialAdapter(tutorials, item -> {
-            // Handle click on tutorial item
-            // For example, navigate to a detail fragment:
-            // NavHostFragment.findNavController(HomeFragment.this)
-            //     .navigate(R.id.action_homeFragment_to_tutorialDetailFragment,
-            //               bundleOf("tutorialContent", item.getContent()));
+            Intent intent = new Intent(getActivity(), TutorialDetailActivity.class);
+            intent.putExtra(TutorialDetailActivity.EXTRA_TUTORIAL_ID, item.getId());
+            intent.putExtra(TutorialDetailActivity.EXTRA_TUTORIAL_TITLE, item.getTitle());
+            intent.putExtra(TutorialDetailActivity.EXTRA_TUTORIAL_CONTENT, item.getContent());
+            startActivity(intent);
         });
 
         binding.tutorialGrid.setLayoutManager(new GridLayoutManager(requireContext(), 2));
