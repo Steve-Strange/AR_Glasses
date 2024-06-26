@@ -1,4 +1,4 @@
-package com.example.ar_glasses.ui.dashboard;
+package com.example.ar_glasses.ui.ai;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,22 +10,22 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.ar_glasses.databinding.FragmentDashboardBinding;
+import com.example.ar_glasses.databinding.FragmentAiBinding;
 
-public class DashboardFragment extends Fragment {
+public class AiFragment extends Fragment {
 
-    private FragmentDashboardBinding binding;
+    private FragmentAiBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        DashboardViewModel dashboardViewModel =
-                new ViewModelProvider(this).get(DashboardViewModel.class);
+        AiViewModel aiViewModel =
+                new ViewModelProvider(this).get(AiViewModel.class);
 
-        binding = FragmentDashboardBinding.inflate(inflater, container, false);
+        binding = FragmentAiBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textDashboard;
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final TextView textView = binding.textAi;
+        aiViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

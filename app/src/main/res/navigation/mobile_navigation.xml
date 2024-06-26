@@ -12,14 +12,20 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.ar_glasses.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_photos"
+        android:name="com.example.ar_glasses.ui.photos.PhotosFragment"
+        android:label="Photos"
+        tools:layout="@layout/fragment_photos" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.example.ar_glasses.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_ai"
+        android:name="com.example.ar_glasses.ui.ai.AiFragment"
+        android:label="AI"
+        tools:layout="@layout/fragment_ai" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.example.ar_glasses.ui.settings.SettingsFragment"
+        android:label="Settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>
