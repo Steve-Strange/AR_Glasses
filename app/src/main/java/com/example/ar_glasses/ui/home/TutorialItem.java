@@ -1,4 +1,4 @@
-package com.example.ar_glasses;
+package com.example.ar_glasses.ui.home;
 
 public class TutorialItem {
     private int id;

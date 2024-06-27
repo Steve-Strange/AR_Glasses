@@ -13,7 +13,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -21,13 +20,13 @@ import java.util.TreeMap;
 
 public class PhotosViewModel extends AndroidViewModel {
 
-    private final MutableLiveData<List<PhotoGroup>> photoGroups;
+    private MutableLiveData<List<PhotoGroup>> photoGroups = new MutableLiveData<>();
+
     private final Application application;
 
     public PhotosViewModel(Application application) {
         super(application);
         this.application = application;
-        photoGroups = new MutableLiveData<>();
     }
 
     public LiveData<List<PhotoGroup>> getPhotoGroups() {
@@ -44,49 +43,53 @@ public class PhotosViewModel extends AndroidViewModel {
 
         String targetFolder = "%Pictures/Gallery/owner/test";
         String sortOrder = MediaStore.Images.Media.DATE_TAKEN + " ASC"; // 尝试使用DATE_TAKEN进行降序排列
-        String selection = MediaStore.Images.Media.DATA + " LIKE ?";
+        String selection = MediaStore.Files.FileColumns.DATA + " LIKE ?";
         String[] selectionArgs = new String[]{targetFolder + "%"};
         String[] projection = {
-                MediaStore.Images.Media._ID,
-                MediaStore.Images.Media.DATE_TAKEN,
-                MediaStore.Images.Media.DISPLAY_NAME,
-                MediaStore.Images.Media.DATA // 确保包含数据列
+                MediaStore.Files.FileColumns._ID,
+                MediaStore.Files.FileColumns.DATE_ADDED,
+                MediaStore.Files.FileColumns.DISPLAY_NAME,
+                MediaStore.Files.FileColumns.DATA,
+                MediaStore.Files.FileColumns.MIME_TYPE
         };
 
         Log.d("PhotosViewModel", "Selection: " + selection);
-        Log.d("PhotosViewModel", "SelectionArgs: " + Arrays.toString(selectionArgs));
+        Log.d("PhotosViewModel", "SelectionArgs: " + selectionArgs);
 
         try (Cursor cursor = application.getContentResolver().query(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                MediaStore.Files.getContentUri("external"),
                 projection,
-                selection, // 添加查询条件
-                selectionArgs, // 添加查询参数
+                selection,
+                selectionArgs,
                 sortOrder
         )) {
             if (cursor != null) {
                 Log.d("PhotosViewModel", "Cursor count: " + cursor.getCount());
-                int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
-                int dateTakenColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN);
-                int displayNameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
-                int dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID);
+                int dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_ADDED);
+                int displayNameColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME);
+                int dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
+                int mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE);
 
                 while (cursor.moveToNext()) {
                     long id = cursor.getLong(idColumn);
-                    long dateTaken = cursor.getLong(dateTakenColumn);
+                    long dateAdded = cursor.getLong(dateAddedColumn);
                     String displayName = cursor.getString(displayNameColumn);
-                    String filePath = cursor.getString(dataColumn); // 获取文件路径
-                    String dateGroup = dateFormat.format(new Date(dateTaken));
+                    String filePath = cursor.getString(dataColumn);
+                    String mimeType = cursor.getString(mimeTypeColumn);
+                    String dateGroup = dateFormat.format(new Date(dateAdded * 1000)); // Convert seconds to milliseconds
 
-                    Log.d("PhotosViewModel", "Found image: " + displayName + " at " + filePath);
+                    Log.d("PhotosViewModel", "Found media: " + displayName + " at " + filePath);
 
                     Uri contentUri = ContentUris.withAppendedId(
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                            MediaStore.Files.getContentUri("external"),
                             id
                     );
 
-                    MediaStoreImage image = new MediaStoreImage(id, displayName, new Date(dateTaken), contentUri);
+                    boolean isVideo = mimeType != null && mimeType.startsWith("video");
+                    MediaStoreImage media = new MediaStoreImage(id, displayName, new Date(dateAdded * 1000), contentUri, isVideo);
 
-                    groupedPhotos.computeIfAbsent(dateGroup, k -> new ArrayList<>()).add(image);
+                    groupedPhotos.computeIfAbsent(dateGroup, k -> new ArrayList<>()).add(media);
                 }
             } else {
                 Log.e("PhotosViewModel", "Cursor is null");
@@ -95,11 +98,10 @@ public class PhotosViewModel extends AndroidViewModel {
             Log.e("PhotosViewModel", "Error querying images", e);
         }
 
-
-
         List<PhotoGroup> photoGroupList = new ArrayList<>();
         for (String date : groupedPhotos.keySet()) {
-            photoGroupList.add(new PhotoGroup(date, groupedPhotos.get(date)));
+            List<MediaStoreImage> mediaList = groupedPhotos.get(date);
+            photoGroupList.add(new PhotoGroup(date, mediaList));
         }
 
         Log.d("PhotosViewModel", "Photo groups count: " + photoGroupList.size());

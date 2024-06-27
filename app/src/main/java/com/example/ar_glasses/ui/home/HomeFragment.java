@@ -12,9 +12,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.ar_glasses.R;
-import com.example.ar_glasses.TutorialAdapter;
-import com.example.ar_glasses.TutorialDetailActivity;
-import com.example.ar_glasses.TutorialItem;
 import com.example.ar_glasses.databinding.FragmentHomeBinding;
 
 import java.util.Arrays;

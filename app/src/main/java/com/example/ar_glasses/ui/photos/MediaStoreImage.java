@@ -11,12 +11,14 @@ public class MediaStoreImage {
     private final String displayName;
     private final Date dateAdded;
     private final Uri contentUri;
+    private final boolean isVideo;
 
-    public MediaStoreImage(long id, String displayName, Date dateAdded, Uri contentUri) {
+    public MediaStoreImage(long id, String displayName, Date dateAdded, Uri contentUri, boolean isVideo) {
         this.id = id;
         this.displayName = displayName;
         this.dateAdded = dateAdded;
         this.contentUri = contentUri;
+        this.isVideo = isVideo;
     }
 
     public long getId() {
@@ -33,6 +35,10 @@ public class MediaStoreImage {
 
     public Uri getContentUri() {
         return contentUri;
+    }
+
+    public boolean isVideo() {
+        return isVideo;
     }
 
     public static final DiffUtil.ItemCallback<MediaStoreImage> DiffCallback = new DiffUtil.ItemCallback<MediaStoreImage>() {
