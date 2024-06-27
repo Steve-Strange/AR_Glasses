@@ -7,8 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.media3.common.MediaItem;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -19,16 +17,10 @@ import java.util.List;
 
 public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final int TYPE_HEADER = 0;
-    private static final int TYPE_PHOTO = 1;
+    private static final int VIEW_TYPE_DATE = 0;
+    private static final int VIEW_TYPE_PHOTO = 1;
 
     private List<Object> items = new ArrayList<>();
-
-    private List<MediaItem> mediaItems = new ArrayList<>();
-
-    public void setMediaItems(List<MediaItem> mediaItems) { // Changed method signature
-        this.mediaItems = mediaItems;notifyDataSetChanged();
-    }
 
     public void setPhotoGroups(List<PhotoGroup> photoGroups) {
         items.clear();
@@ -39,34 +31,34 @@ public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    public boolean isHeader(int position) {
-        return getItemViewType(position) == TYPE_HEADER;
+    public int getItemViewType(int position) {
+        if (items.get(position) instanceof String) {
+            return VIEW_TYPE_DATE;
+        } else {
+            return VIEW_TYPE_PHOTO;
+        }
     }
 
-    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == TYPE_HEADER) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_date_header, parent, false);
-            return new HeaderViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == VIEW_TYPE_DATE) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_date_header, parent, false);
+            return new DateViewHolder(view);
         } else {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_photo, parent, false);
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_photo, parent, false);
             return new PhotoViewHolder(view);
         }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof HeaderViewHolder) {
-            ((HeaderViewHolder) holder).bind((String) items.get(position));
-        } else if (holder instanceof PhotoViewHolder) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (getItemViewType(position) == VIEW_TYPE_DATE) {
+            ((DateViewHolder) holder).bind((String) items.get(position));
+        } else {
             ((PhotoViewHolder) holder).bind((MediaStoreImage) items.get(position));
         }
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return items.get(position) instanceof String ? TYPE_HEADER : TYPE_PHOTO;
     }
 
     @Override
@@ -74,10 +66,14 @@ public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return items.size();
     }
 
-    static class HeaderViewHolder extends RecyclerView.ViewHolder {
+    public boolean isHeader(int position) {
+        return getItemViewType(position) == VIEW_TYPE_DATE;
+    }
+
+    static class DateViewHolder extends RecyclerView.ViewHolder {
         TextView dateText;
 
-        HeaderViewHolder(@NonNull View itemView) {
+        DateViewHolder(View itemView) {
             super(itemView);
             dateText = itemView.findViewById(R.id.dateText);
         }
@@ -92,7 +88,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         ImageView videoIcon;
         MediaStoreImage image;
 
-        PhotoViewHolder(@NonNull View itemView) {
+        PhotoViewHolder(View itemView) {
             super(itemView);
             photoImage = itemView.findViewById(R.id.photoImage);
             videoIcon = itemView.findViewById(R.id.videoIcon);

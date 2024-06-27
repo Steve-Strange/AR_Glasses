@@ -38,11 +38,11 @@ public class PhotosViewModel extends AndroidViewModel {
     }
 
     private void queryImages() {
-        TreeMap<String, List<MediaStoreImage>> groupedPhotos = new TreeMap<>();
+        TreeMap<String, List<MediaStoreImage>> groupedPhotos = new TreeMap<>((d1, d2) -> d2.compareTo(d1));
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
         String targetFolder = "%Pictures/Gallery/owner/test";
-        String sortOrder = MediaStore.Images.Media.DATE_TAKEN + " ASC"; // 尝试使用DATE_TAKEN进行降序排列
+        String sortOrder = MediaStore.Images.Media.DATE_ADDED + " ASC";
         String selection = MediaStore.Files.FileColumns.DATA + " LIKE ?";
         String[] selectionArgs = new String[]{targetFolder + "%"};
         String[] projection = {
@@ -53,9 +53,6 @@ public class PhotosViewModel extends AndroidViewModel {
                 MediaStore.Files.FileColumns.MIME_TYPE
         };
 
-        Log.d("PhotosViewModel", "Selection: " + selection);
-        Log.d("PhotosViewModel", "SelectionArgs: " + selectionArgs);
-
         try (Cursor cursor = application.getContentResolver().query(
                 MediaStore.Files.getContentUri("external"),
                 projection,
@@ -64,7 +61,6 @@ public class PhotosViewModel extends AndroidViewModel {
                 sortOrder
         )) {
             if (cursor != null) {
-                Log.d("PhotosViewModel", "Cursor count: " + cursor.getCount());
                 int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID);
                 int dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_ADDED);
                 int displayNameColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME);
@@ -78,8 +74,6 @@ public class PhotosViewModel extends AndroidViewModel {
                     String filePath = cursor.getString(dataColumn);
                     String mimeType = cursor.getString(mimeTypeColumn);
                     String dateGroup = dateFormat.format(new Date(dateAdded * 1000)); // Convert seconds to milliseconds
-
-                    Log.d("PhotosViewModel", "Found media: " + displayName + " at " + filePath);
 
                     Uri contentUri = ContentUris.withAppendedId(
                             MediaStore.Files.getContentUri("external"),
@@ -104,7 +98,6 @@ public class PhotosViewModel extends AndroidViewModel {
             photoGroupList.add(new PhotoGroup(date, mediaList));
         }
 
-        Log.d("PhotosViewModel", "Photo groups count: " + photoGroupList.size());
         photoGroups.postValue(photoGroupList);
     }
 }

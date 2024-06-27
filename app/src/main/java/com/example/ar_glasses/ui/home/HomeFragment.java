@@ -54,8 +54,8 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
 
-        binding.tutorialGrid.setLayoutManager(new GridLayoutManager(requireContext(), 2));
-        binding.tutorialGrid.setAdapter(tutorialAdapter);
+        binding.recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        binding.recyclerView.setAdapter(tutorialAdapter);
     }
 
     @Override
