@@ -1,6 +1,5 @@
-package com.example.ar_glasses;
+package com.example.ar_glasses.ui.photos;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.ar_glasses.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +26,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         items.clear();
         for (PhotoGroup group : photoGroups) {
             items.add(group.getDate());
-            items.addAll(group.getPhotoPaths());
+            items.addAll(group.getPhotos());
         }
-        Log.d("PhotoAdapter", "Total items: " + items.size());
         notifyDataSetChanged();
     }
 
@@ -49,7 +48,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (holder instanceof HeaderViewHolder) {
             ((HeaderViewHolder) holder).bind((String) items.get(position));
         } else if (holder instanceof PhotoViewHolder) {
-            ((PhotoViewHolder) holder).bind((String) items.get(position));
+            ((PhotoViewHolder) holder).bind((com.example.ar_glasses.ui.photos.MediaStoreImage) items.get(position));
         }
     }
 
@@ -84,9 +83,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             photoImage = itemView.findViewById(R.id.photoImage);
         }
 
-        void bind(String photoPath) {
+        void bind(com.example.ar_glasses.ui.photos.MediaStoreImage image) {
             Glide.with(photoImage.getContext())
-                    .load(photoPath)
+                    .load(image.getContentUri())
                     .into(photoImage);
         }
     }
