@@ -16,5 +16,5 @@
         android:layout_height="48dp"
         android:layout_gravity="center"
         android:visibility="gone"
-        android:src="@drawable/tutorial1" />
+        android:src="@drawable/video_white" />
 </FrameLayout>
