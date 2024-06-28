@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,6 +35,9 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         initTutorials();
         setupRecyclerView();
+
+        ImageButton bluetoothButton = binding.bluetoothButton;
+        bluetoothButton.setOnClickListener(v -> openBluetoothActivity());
     }
 
     private void initTutorials() {
@@ -56,6 +60,11 @@ public class HomeFragment extends Fragment {
 
         binding.recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         binding.recyclerView.setAdapter(tutorialAdapter);
+    }
+
+    private void openBluetoothActivity() {
+        Intent intent = new Intent(getActivity(), com.example.ar_glasses.ui.home.BluetoothActivity.class);
+        startActivity(intent);
     }
 
     @Override
