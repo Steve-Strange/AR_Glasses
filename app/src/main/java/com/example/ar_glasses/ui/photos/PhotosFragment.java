@@ -21,10 +21,17 @@ import java.util.List;
 
 public class PhotosFragment extends Fragment {
 
-    private static final int READ_EXTERNAL_STORAGE_REQUEST = 0x1045;
+    private static final int REQUEST_PERMISSIONS = 0x1045;
     private FragmentPhotosBinding binding;
     private PhotosViewModel photosViewModel;
     private PhotoAdapter photoAdapter;
+
+    private static final String[] REQUIRED_PERMISSIONS = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.READ_MEDIA_AUDIO, // For music and audio
+            Manifest.permission.READ_MEDIA_VIDEO, // For videos
+            Manifest.permission.READ_MEDIA_IMAGES // For images (optional, as it's covered by READ_EXTERNAL_STORAGE on older devices)
+    };
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -47,10 +54,10 @@ public class PhotosFragment extends Fragment {
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setAdapter(photoAdapter);
 
-        if (haveStoragePermission()) {
+        if (allPermissionsGranted()) {
             showImages();
         } else {
-            requestPermission();
+            requestPermissions();
         }
 
         return root;
@@ -71,29 +78,26 @@ public class PhotosFragment extends Fragment {
     }
 
 
-    private boolean haveStoragePermission() {
-        return ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.READ_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED;
+    private boolean allPermissionsGranted() {
+        for (String permission : REQUIRED_PERMISSIONS) {
+            if (ContextCompat.checkSelfPermission(requireContext(), permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    private void requestPermission() {
-        if (!haveStoragePermission()) {
-            String[] permissions = {
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-            };
-            requestPermissions(permissions, READ_EXTERNAL_STORAGE_REQUEST);
-        }
+    private void requestPermissions() {
+        requestPermissions(REQUIRED_PERMISSIONS, REQUEST_PERMISSIONS);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == READ_EXTERNAL_STORAGE_REQUEST) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == REQUEST_PERMISSIONS) {
+            if (allPermissionsGranted()) {
                 showImages();
             } else {
-                Toast.makeText(getContext(), "Permission denied. Cannot load images.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Permissions not granted. Cannot load media.", Toast.LENGTH_SHORT).show();
             }
         }
     }

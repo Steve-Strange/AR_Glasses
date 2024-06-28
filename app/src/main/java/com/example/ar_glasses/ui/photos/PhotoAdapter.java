@@ -1,6 +1,7 @@
 package com.example.ar_glasses.ui.photos;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,9 +25,13 @@ public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public void setPhotoGroups(List<PhotoGroup> photoGroups) {
         items.clear();
+        Log.d(String.valueOf(photoGroups.size()), " :PhotoGroups");
         for (PhotoGroup group : photoGroups) {
-            items.add(group.getDate()); // 添加日期作为头部
+            String date = group.getDate();
+            items.add(date); // 添加日期作为头部
+            Log.d("PhotoAdapter", "Adding date: " + date);
             items.addAll(group.getPhotos()); // 添加对应的图片列表
+            Log.d("PhotoAdapter", "Adding " + group.getPhotos().size() + " photos for date: " + date);
         }
         notifyDataSetChanged();
     }
