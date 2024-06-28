@@ -31,8 +31,9 @@ public class ChatCardAdapter extends RecyclerView.Adapter<ChatCardAdapter.ChatCa
     public void onBindViewHolder(@NonNull ChatCardViewHolder holder, int position) {
         ChatCard ChatCard = ChatCards.get(position);
         holder.textViewTopic.setText(ChatCard.getTopic());
-        holder.textViewTime.setText(ChatCard.getTime());
+        holder.textViewTime.setText(ChatCard.getFormattedTime());
     }
+
 
     @Override
     public int getItemCount() {

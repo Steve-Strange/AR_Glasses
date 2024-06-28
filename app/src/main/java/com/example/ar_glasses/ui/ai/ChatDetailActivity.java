@@ -1,5 +1,8 @@
 package com.example.ar_glasses.ui.ai;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -7,6 +10,7 @@ import android.os.Looper;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.ar_glasses.data.ChatDatabaseHelper;
 import com.example.ar_glasses.databinding.ActivityChatDetailBinding;
 
 import java.util.ArrayList;
@@ -18,6 +22,9 @@ public class ChatDetailActivity extends AppCompatActivity {
     private List<ChatMessage> messages;
     private ChatMessageAdapter adapter;
     private Handler mainHandler;
+    private ChatDatabaseHelper dbHelper;
+    private long conversationId;
+    private String topic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +32,11 @@ public class ChatDetailActivity extends AppCompatActivity {
         binding = ActivityChatDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        String topic = getIntent().getStringExtra("TOPIC");
+        topic = getIntent().getStringExtra("TOPIC");
         setTitle(topic);
+
+        dbHelper = new ChatDatabaseHelper(this);
+        conversationId = getIntent().getLongExtra("CONVERSATION_ID", System.currentTimeMillis());
 
         initRecyclerView();
         loadMessages();
@@ -44,7 +54,15 @@ public class ChatDetailActivity extends AppCompatActivity {
     }
 
     private void loadMessages() {
-        // 这里可以加载历史消息
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query("messages", null, "conversation_id = ?", new String[]{String.valueOf(conversationId)}, null, null, "timestamp ASC");
+        while (cursor.moveToNext()) {
+            String content = cursor.getString(cursor.getColumnIndex("content"));
+            boolean isAi = cursor.getInt(cursor.getColumnIndex("is_ai")) == 1;
+            messages.add(new ChatMessage(content, isAi));
+        }
+        cursor.close();
+        adapter.notifyDataSetChanged();
     }
 
     private void sendMessage() {
@@ -71,5 +89,18 @@ public class ChatDetailActivity extends AppCompatActivity {
         messages.add(message);
         adapter.notifyItemInserted(messages.size() - 1);
         binding.recyclerViewMessages.smoothScrollToPosition(messages.size() - 1);
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("conversation_id", conversationId);
+        values.put("content", message.getContent());
+        values.put("is_ai", message.isAi() ? 1 : 0);
+        db.insert("messages", null, values);
+
+        ContentValues conversationValues = new ContentValues();
+        conversationValues.put("last_message_time", System.currentTimeMillis());
+        db.update("conversations", conversationValues, "id = ?", new String[]{String.valueOf(conversationId)});
     }
+
+
 }
