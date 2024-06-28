@@ -16,9 +16,9 @@ import java.util.List;
 
 public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.MessageViewHolder> {
 
-    private List<ChatMessage> messages;
+    private List<com.example.ar_glasses.ui.ai.ChatMessage> messages;
 
-    public ChatMessageAdapter(List<ChatMessage> messages) {
+    public ChatMessageAdapter(List<com.example.ar_glasses.ui.ai.ChatMessage> messages) {
         this.messages = messages;
     }
 
@@ -31,7 +31,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-        ChatMessage message = messages.get(position);
+        com.example.ar_glasses.ui.ai.ChatMessage message = messages.get(position);
         holder.messageText.setText(message.getContent());
 
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) holder.messageText.getLayoutParams();

@@ -32,10 +32,21 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    packagingOptions {
+        resources {
+            excludes += "META-INF/DEPENDENCIES"
+            excludes += "META-INF/LICENSE"
+            excludes += "META-INF/LICENSE.txt"
+            excludes += "META-INF/license.txt"
+            excludes += "META-INF/NOTICE"
+            excludes += "META-INF/NOTICE.txt"
+            excludes += "META-INF/notice.txt"
+        }
+    }
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)
@@ -49,5 +60,6 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.ui)
-    implementation(libs.glide) // 替换为您想要的 Glide 版本
+    implementation(libs.glide)
+    implementation(libs.oapi.java.sdk)
 }
